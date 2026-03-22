@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Canopy | Interactive Writing Mentor</title>
+    <style>
+        :root {
+            --deep-forest: #0b1a10; --moss: #2d4c36; --dappled-gold: #af935a;
+            --parchment: #fdfaf5; --ink: #1c1c1c; --bark: #4a3728; --leaf-mist: #eef2ef;
+            --shadow: rgba(0,0,0,0.1); --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; background: var(--deep-forest); color: var(--ink);
+            font-family: 'Garamond', 'Georgia', serif; display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* --- THE FOREST ENVIRONMENT --- */
+        .canopy-ambient {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% -20%, rgba(175, 147, 90, 0.15), transparent 80%);
+            pointer-events: none; z-index: 100; animation: lightShift 10s infinite alternate;
+        }
+        @keyframes lightShift { from { opacity: 0.5; } to { opacity: 1; } }
+
+        /* --- SIDEBAR: THE ROOTS (Predictable Architecture) --- */
+        .roots-nav {
+            width: 380px; background: white; border-right: 1px solid #ddd;
+            padding: 40px; display: flex; flex-direction: column; z-index: 20;
+            box-shadow: 10px 0 40px rgba(0,0,0,0.05);
+        }
+        .studio-title { font-size: 1.8rem; letter-spacing: 4px; color: var(--moss); margin-bottom: 5px; text-transform: uppercase; }
+        .studio-subtitle { font-size: 0.8rem; color: var(--dappled-gold); letter-spacing: 1px; margin-bottom: 40px; }
+
+        .framework-group { margin-bottom: 30px; }
+        .label { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--bark); opacity: 0.6; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+        
+        .root-card {
+            background: var(--leaf-mist); padding: 18px; border-radius: 8px; border-left: 4px solid var(--moss);
+            margin-bottom: 12px; transition: var(--transition); cursor: pointer; position: relative;
+        }
+        .root-card:hover { transform: translateX(5px); background: #e2e9e3; }
+        .root-card.locked { opacity: 0.5; border-left-color: #ccc; cursor: not-allowed; }
+        .root-status { font-size: 0.75rem; color: var(--moss); margin-top: 5px; font-weight: bold; }
+
+        /* --- MAIN STUDIO: THE CANOPY --- */
+        .studio-floor { flex-grow: 1; background: var(--parchment); overflow-y: auto; position: relative; padding: 100px 60px; }
+        .editor-wrap { max-width: 850px; margin: 0 auto; background: white; padding: 80px; box-shadow: 0 20px 60px var(--shadow); border-radius: 2px; }
+        #editor {
+            width: 100%; min-height: 600px; border: none; outline: none;
+            font-size: 1.35rem; line-height: 2.1; color: var(--ink);
+            background: transparent; resize: none;
+        }
+
+        /* --- ADVANCED MENTOR CONSOLE --- */
+        .mentor-pod {
+            position: fixed; bottom: 40px; right: 40px; width: 420px;
+            background: white; border-radius: 16px; box-shadow: 0 10px 50px rgba(0,0,0,0.2);
+            border: 1px solid #eee; z-index: 200; display: flex; flex-direction: column;
+            overflow: hidden; transition: var(--transition);
+        }
+        .mentor-pod.minimized { height: 60px; width: 200px; }
+        .mentor-head { background: var(--moss); color: white; padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        
+        .mentor-body { padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .mentor-text { font-family: 'Inter', sans-serif; font-size: 0.95rem; line-height: 1.6; color: #444; min-height: 80px; }
+        
+        .btn {
+            background: var(--moss); color: white; border: none; padding: 14px;
+            border-radius: 6px; cursor: pointer; font-weight: 600; font-family: 'Inter';
+            transition: 0.2s;
+        }
+        .btn:hover { background: var(--bark); }
+
+        /* --- PROGRESS BAR --- */
+        .progress-circle {
+            width: 60px; height: 60px; position: absolute; top: 40px; right: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="canopy-ambient"></div>
+
+<nav class="roots-nav">
+    <div class="studio-title">The Canopy</div>
+    <div class="studio-subtitle">Speciesism • AI • Nature</div>
+
+    <div class="framework-group">
+        <span class="label">Foundational Roots</span>
+        <div class="root-card" onclick="openMentor('newitz')">
+            <strong>The Argument</strong> (Newitz)
+            <div id="status-newitz" class="root-status">🌱 Thesis Needed</div>
+        </div>
+        <div class="root-card" onclick="openMentor('stiefvater')">
+            <strong>The Mood</strong> (Stiefvater)
+            <div id="status-stiefvater" class="root-status">🌱 Tuning Fork Silence</div>
+        </div>
+        <div class="root-card" onclick="openMentor('rundell')">
+            <strong>The Constraint</strong> (Rundell)
+            <div id="status-rundell" class="root-status">🌱 Unbounded</div>
+        </div>
+        <div class="root-card" onclick="openMentor('schwab')">
+            <strong>The Bones</strong> (Schwab)
+            <div id="status-schwab" class="root-status">🌱 0/6 Structural Beats</div>
+        </div>
+    </div>
+
+    <div class="framework-group" style="margin-top: auto;">
+        <span class="label">Project Inventory</span>
+        <div style="font-size: 0.85rem; padding: 15px; background: #fff9e6; border: 1px dashed var(--dappled-gold);">
+            <strong>The Parking Lot:</strong><br>
+            <span id="parking-count">0 items held in dormancy.</span>
+        </div>
+    </div>
+</nav>
+
+<main class="studio-floor">
+    <div class="editor-wrap">
+        <textarea id="editor" placeholder="Walk deeper into the forest..."></textarea>
+    </div>
+</main>
+
+<div class="mentor-pod" id="mentorPod">
+    <div class="mentor-head" onclick="toggleMentor()">
+        <span>🌿 Forest Mentor</span>
+        <span id="podToggle">▾</span>
+    </div>
+    <div class="mentor-body">
+        <div class="mentor-text" id="mentorSpeech">
+            I am watching the forest grow. To mentor you properly, select a framework lens for your current scene.
+        </div>
+        <select id="frameworkLens" style="padding: 10px; border-radius: 4px;">
+            <option value="rundell">Rundell: Precision & Wonder</option>
+            <option value="stiefvater">Stiefvater: Emotional Hum</option>
+            <option value="newitz">Newitz: Speciesism Argument</option>
+            <option value="schwab">Schwab: Structural Integrity</option>
+        </select>
+        <button class="btn" onclick="runDiagnostic()">Run Altitude Check</button>
+    </div>
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ENGINE ---
+    class CanopyState {
+        constructor() {
+            this.draft = localStorage.getItem('canopy_draft') || "";
+            this.frameworks = JSON.parse(localStorage.getItem('canopy_frameworks')) || {
+                newitz: false, stiefvater: false, rundell: false, schwab: false
+            };
+            this.init();
+        }
+
+        init() {
+            document.getElementById('editor').value = this.draft;
+            this.updateUI();
+        }
+
+        save(text) {
+            this.draft = text;
+            localStorage.setItem('canopy_draft', text);
+            this.updateUI();
+        }
+
+        updateUI() {
+            const wordCount = this.draft.split(/\s+/).filter(x => x).length;
+            // Mentorship logic: auto-update status based on content
+            if (this.draft.includes("?")) document.getElementById('status-newitz').innerText = "🌿 Argument Testing";
+            if (wordCount > 100) document.getElementById('status-rundell').innerText = "🌿 Verbs Active";
+        }
+    }
+
+    const state = new CanopyState();
+
+    // --- INTERACTION LOGIC ---
+    function toggleMentor() {
+        const pod = document.getElementById('mentorPod');
+        pod.classList.toggle('minimized');
+        document.getElementById('podToggle').innerText = pod.classList.contains('minimized') ? '▴' : '▾';
+    }
+
+    function runDiagnostic() {
+        const lens = document.getElementById('frameworkLens').value;
+        const text = document.getElementById('editor').value;
+        const speech = document.getElementById('mentorSpeech');
+
+        if (text.length < 50) {
+            speech.innerHTML = "<em>The understory is too sparse. Write more so I can hear the heartbeat of the forest.</em>";
+            return;
+        }
+
+        speech.innerHTML = "<em>Analyzing through the " + lens + " framework...</em>";
+
+        // MENTORSHIP LOGIC LOOPS
+        setTimeout(() => {
+            let advice = "";
+            switch(lens) {
+                case 'rundell':
+                    advice = "<strong>Rundell Mentorship:</strong> You're using too many 'invisible' verbs. Find the <em>astonishment</em> in this scene. Instead of 'moving', does the AI 'clamber' or 'unfurl'?";
+                    break;
+                case 'stiefvater':
+                    advice = "<strong>Stiefvater Mentorship:</strong> Check your tuning fork. This scene feels like a 'Foot'. Give us the sensory memory of the forest to push it to a 'Mile'.";
+                    break;
+                case 'newitz':
+                    advice = "<strong>Newitz Mentorship:</strong> Pressure-test your thesis. Is the 'nature-born AI' acting out of human programmed logic, or is its logic truly accidental and wild?";
+                    break;
+                case 'schwab':
+                    advice = "<strong>Schwab Mentorship:</strong> Is this 'Flesh' or 'Bone'? If this scene doesn't bridge the structural gap to your next beat, move the extra prose to the Parking Lot.";
+                    break;
+            }
+            speech.innerHTML = advice;
+        }, 800);
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('editor').addEventListener('input', (e) => {
+        state.save(e.target.value);
+    });
+
+    function openMentor(type) {
+        toggleMentor();
+        document.getElementById('frameworkLens').value = type;
+        document.getElementById('mentorSpeech').innerText = "Let's focus on your " + type + " foundations. Paste your core intent for this module into the draft.";
+    }
+</script>
+
+</body>
+</html>
